@@ -950,7 +950,6 @@ async function ne() {
       console.warn("[绯色官途MVU] 恢复流式输出设置失败");
     }
   } finally {
-    C = null;
   }
 }
 function re() {
