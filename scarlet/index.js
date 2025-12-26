@@ -910,56 +910,38 @@ async function te(_0x4118bc, _0x4a06df) {
   }
 }
 function ae() {
-  try {
-    // 优先读取酒馆全局的实时设置，这是最准确的
-    if (SillyTavern.chatCompletionSettings && typeof SillyTavern.chatCompletionSettings.stream !== 'undefined') {
-      C = SillyTavern.chatCompletionSettings.stream;
-      console.info("[绯色官途MVU] 保存流式输出设置 (Global):", C);
-    } else {
-      // 如果全局读取不到，再尝试从预设读取
-      const _0x465ad2 = getPreset("in_use");
-      C = _0x465ad2.settings.should_stream;
-      console.info("[绯色官途MVU] 保存流式输出设置 (Preset):", C);
-    }
-  } catch (_0xe7137b) {
-    // 如果都失败了，默认为 true (开启流式)
-    C = true;
-    console.warn("[绯色官途MVU] 保存流式设置失败，默认视为开启");
-  }
-  // --------------------
+  // 【强制修改】直接赋值为 false，不读取任何设置
+  C = false;
+  console.info("[绯色官途MVU] 已强制锁定流式设置记录为: False");
 }
 
 async function ne() {
-    // 【核心修改1】如果 C 是 null/undefined，说明没有需要恢复的记录
-    // 直接退出，什么都不要做！千万不要去改酒馆的设置！
-    if (C === null || C === undefined) {
-        return;
-    }
+  // 【强制修改】永远设置为 false (不流式)
+  const _0x4f44c0 = false;
 
-    const _0x4f44c0 = C;
-    
-    console.info("[绯色官途MVU] 准备恢复流式输出设置:", _0x4f44c0);
+  console.info("[绯色官途MVU] 强制应用流式输出设置:", _0x4f44c0);
+  try {
+    // 强制修改当前预设
+    await setPreset("in_use", {
+      settings: {
+        should_stream: false // 强制关闭
+      }
+    });
+    console.info("[绯色官途MVU] 已通过Preset API强制关闭流式");
+  } catch (_0x4ce38a) {
     try {
-        await setPreset("in_use", {
-            settings: {
-                should_stream: _0x4f44c0
-            }
-        });
-        console.info("[绯色官途MVU] 已通过Preset API恢复流式输出设置:", _0x4f44c0);
-    } catch (_0x4ce38a) {
-        try {
-            if (SillyTavern.chatCompletionSettings) {
-                SillyTavern.chatCompletionSettings.stream = _0x4f44c0;
-                console.info("[绯色官途MVU] 已通过fallback恢复流式输出设置:", _0x4f44c0);
-            }
-        } catch {
-            console.warn("[绯色官途MVU] 恢复流式输出设置失败");
-        }
-    } finally {
-        // 【核心修改2】为了保险起见，这里不需要清空 C，或者清空也没关系了
-        // 因为上面第一行代码已经阻止了 C 为空时的错误操作
-        C = null; 
+      // 后备方案：强制修改全局对象
+      if (SillyTavern.chatCompletionSettings) {
+        SillyTavern.chatCompletionSettings.stream = false; // 强制关闭
+        console.info("[绯色官途MVU] 已通过fallback强制关闭流式");
+      }
+    } catch {
+      console.warn("[绯色官途MVU] 强制关闭流式失败");
     }
+  } finally {
+    // 保持 C 为 false，防止后续逻辑通过 C 变回 true
+    C = false;
+  }
 }
 function re() {
   if (I.enableExtraModelParsing) {
