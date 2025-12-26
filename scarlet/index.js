@@ -836,7 +836,6 @@ async function Z(_0x28485a) {
       O = !1;
       N = null;
     } finally {
-      await ne();
       j = !1;
       N = null;
     }
@@ -931,26 +930,36 @@ function ae() {
 }
 
 async function ne() {
-  const _0x4f44c0 = (C !== null && C !== undefined) ? C : true;
-  console.info("[绯色官途MVU] 准备恢复流式输出设置:", _0x4f44c0);
-  try {
-    await setPreset("in_use", {
-      settings: {
-        should_stream: _0x4f44c0
-      }
-    });
-    console.info("[绯色官途MVU] 已通过Preset API恢复流式输出设置:", _0x4f44c0);
-  } catch (_0x4ce38a) {
-    try {
-      if (SillyTavern.chatCompletionSettings) {
-        SillyTavern.chatCompletionSettings.stream = _0x4f44c0;
-        console.info("[绯色官途MVU] 已通过fallback恢复流式输出设置:", _0x4f44c0);
-      }
-    } catch {
-      console.warn("[绯色官途MVU] 恢复流式输出设置失败");
+    // 【核心修改1】如果 C 是 null/undefined，说明没有需要恢复的记录
+    // 直接退出，什么都不要做！千万不要去改酒馆的设置！
+    if (C === null || C === undefined) {
+        return;
     }
-  } finally {
-  }
+
+    const _0x4f44c0 = C;
+    
+    console.info("[绯色官途MVU] 准备恢复流式输出设置:", _0x4f44c0);
+    try {
+        await setPreset("in_use", {
+            settings: {
+                should_stream: _0x4f44c0
+            }
+        });
+        console.info("[绯色官途MVU] 已通过Preset API恢复流式输出设置:", _0x4f44c0);
+    } catch (_0x4ce38a) {
+        try {
+            if (SillyTavern.chatCompletionSettings) {
+                SillyTavern.chatCompletionSettings.stream = _0x4f44c0;
+                console.info("[绯色官途MVU] 已通过fallback恢复流式输出设置:", _0x4f44c0);
+            }
+        } catch {
+            console.warn("[绯色官途MVU] 恢复流式输出设置失败");
+        }
+    } finally {
+        // 【核心修改2】为了保险起见，这里不需要清空 C，或者清空也没关系了
+        // 因为上面第一行代码已经阻止了 C 为空时的错误操作
+        C = null; 
+    }
 }
 function re() {
   if (I.enableExtraModelParsing) {
@@ -995,7 +1004,6 @@ async function se() {
     N = null;
     eventEmit(q.PARSING_ABORTED);
     toastr.info("已中断解析", "[绯色官途]");
-    await ne();
     return;
   }
   if (!I.enableExtraModelParsing) {
@@ -1167,7 +1175,6 @@ async function se() {
     O = !1;
     N = null;
   } finally {
-    await ne();
     j = !1;
     N = null;
   }
@@ -1272,13 +1279,11 @@ function ie() {
             j = false;
             D = null;
             N = null;
-            await ne();
           }
         }(D.messageId, D.originalMessage, _0x34e48a.updateBlock);
       } else {
         A = false;
         D = null;
-        await ne();
         eventEmit(q.PARSING_ABORTED);
         toastr.info("已取消变量更新", "[绯色官途]");
       }
@@ -1297,7 +1302,6 @@ function ie() {
       A = !1;
       j = !1;
       N = null;
-      await ne();
       eventEmit(q.PARSING_ABORTED);
       Q = !1;
       setTimeout(() => {
@@ -1488,7 +1492,6 @@ async function ce() {
           j = !1;
           N = null;
           eventEmit(q.PARSING_ABORTED);
-          await ne();
           toastr.info("已中断解析", "[绯色官途]");
         }
       },
